@@ -11,8 +11,8 @@ jsDelivr’s free `gh/` CDN only serves **public** GitHub repos. Venue exterior 
 ## Layout
 
 ```text
-london/venues/{handle}.jpg   # one city, flat by venue handle
-manifest.json                # handle → CDN URL map
+london/venues/{handle}.webp   # WebP q≈80 (preferred)
+manifest.json                 # handle → CDN URL map
 ```
 
 Future cities: `manchester/venues/…`, etc. Borough subfolders are optional later when we have a stable borough→venue map.
@@ -20,19 +20,19 @@ Future cities: `manchester/venues/…`, etc. Borough subfolders are optional lat
 ## CDN URLs
 
 ```text
-https://cdn.jsdelivr.net/gh/cpalmer-ios/crewters-media@main/london/venues/{handle}.jpg
+https://cdn.jsdelivr.net/gh/cpalmer-ios/crewters-media@main/london/venues/{handle}.webp
 ```
 
 Pin a commit SHA instead of `@main` in production if you need immutable cache:
 
 ```text
-https://cdn.jsdelivr.net/gh/cpalmer-ios/crewters-media@{sha}/london/venues/{handle}.jpg
+https://cdn.jsdelivr.net/gh/cpalmer-ios/crewters-media@{sha}/london/venues/{handle}.webp
 ```
 
 After pushing new photos, purge once if needed:
 
 ```text
-https://purge.jsdelivr.net/gh/cpalmer-ios/crewters-media@main/london/venues/{handle}.jpg
+https://purge.jsdelivr.net/gh/cpalmer-ios/crewters-media@main/london/venues/{handle}.webp
 ```
 
 ## Website
@@ -45,7 +45,7 @@ Use the same CDN URL as `UIImage` / Nuke / Kingfisher source. Example:
 
 ```swift
 let url = URL(string:
-  "https://cdn.jsdelivr.net/gh/cpalmer-ios/crewters-media@main/london/venues/\(handle).jpg"
+  "https://cdn.jsdelivr.net/gh/cpalmer-ios/crewters-media@main/london/venues/\(handle).webp"
 )
 ```
 
@@ -59,10 +59,10 @@ Do **not** call Google Places Photo Media for bulk venue imagery.
 
 ## Adding photos
 
-1. Drop JPEGs under `london/venues/{handle}.jpg` (handle = Crewters venue handle).
-2. Regenerate `manifest.json` (see script note below or run the website sync helper).
+1. Drop source images under `london/venues/` (JPG or WebP; handle = Crewters venue handle).
+2. If JPG: `bash scripts/jpg-to-webp.sh` (cwebp q=80) — or run `python3 scripts/rebuild-manifest.py` if already WebP.
 3. Commit + push to `main`.
-4. Update website manifest copy if it vendors the JSON.
+4. Sync website `lib/venues/photo-manifest.json` from this repo’s `manifest.json`.
 
 ## Linear
 
